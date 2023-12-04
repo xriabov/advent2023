@@ -1,7 +1,22 @@
 [package]
-name = "day2"
+name = "advent2023"
 version = "0.1.0"
 edition = "2021"
+
+[lib]
+path = "src/shared/lib.rs"
+
+[[bin]]
+name = "day1"
+
+[[bin]]
+name = "day2"
+
+[[bin]]
+name = "day3"
+
+[[bin]]
+name = "day4"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

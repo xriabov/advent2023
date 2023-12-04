@@ -1,5 +1,4 @@
-use std::env;
-use std::fs;
+use advent2023::*;
 use std::str::FromStr;
 
 #[derive(Debug)]
@@ -108,31 +107,68 @@ impl FromStr for Game {
     }
 }
 
+fn parse_games(input: &str) -> Vec<Game> {
+    input
+        .lines()
+        .map(|line| line.parse::<Game>())
+        .filter(|res| res.is_ok())
+        .map(|ok| ok.unwrap())
+        .collect()
+}
+
+fn sum_of_ids(games: &Vec<Game>, red: u32, green: u32, blue: u32) -> u32 {
+    games
+        .iter()
+        .filter(|game| game.is_valid(red, green, blue))
+        .map(|game| game.id)
+        .sum()
+}
+
+fn sum_of_powers(games: &Vec<Game>) -> u32 {
+    games
+        .iter()
+        .map(|game| game.min_to_play.red * game.min_to_play.green * game.min_to_play.blue)
+        .sum()
+}
+
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    let file =
-        fs::read_to_string(args.get(1).expect("Enter file name")).expect("Failed to read file");
+    let file = get_input_text().unwrap_or_else(|| {
+        println!("Invalid input file");
+        std::process::exit(1);
+    });
 
-    let mut sum_of_ids: u32 = 0;
-    let mut sum_of_powers: u32 = 0;
-    let max_red: u32 = 12;
-    let max_green: u32 = 13;
-    let max_blue: u32 = 14;
-
-    for game in file.split('\n') {
-        match game.parse::<Game>() {
-            Ok(game) => {
-                sum_of_powers += game.power();
-                if game.is_valid(max_red, max_green, max_blue) {
-                    sum_of_ids += game.id
-                }
-            }
-            Err(_) => (),
-        }
-    }
-
+    let games = parse_games(&file);
+    let sum_of_ids: u32 = sum_of_ids(&games, 12, 13, 14);
+    let sum_of_powers: u32 = sum_of_powers(&games);
     println!(
         "Sum of ids: {}\nSum of powers: {}",
         sum_of_ids, sum_of_powers
     );
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn aoc_1() {
+        let input = "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
+Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
+Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
+Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green";
+        let games = parse_games(input);
+        assert_eq!(sum_of_ids(&games, 12, 13, 14), 8);
+    }
+
+    #[test]
+    fn aoc_2() {
+        let input = "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
+Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
+Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
+Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green";
+        let games = parse_games(input);
+        assert_eq!(sum_of_powers(&games), 2286);
+    }
 }

@@ -1,3 +1,4 @@
+#![feature(test)]
 use std::process::exit;
 
 use advent2023::*;
@@ -216,9 +217,22 @@ fn main() {
     println!("{}", lowest_location(&input, traverse_range));
 }
 
+extern crate test;
 #[cfg(test)]
 mod tests {
     use super::*;
+    use test::Bencher;
+
+    #[bench]
+    fn name(b: &mut Bencher) {
+        let input = get_text("/home/pathetic_gull/repos/advent2023/src/bin/day5.txt")
+            .unwrap_or_else(|| {
+                println!("Invalid file");
+                exit(1)
+            });
+
+        b.iter(|| lowest_location(&input, traverse_range));
+    }
 
     #[test]
     fn aoc_1() {

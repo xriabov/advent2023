@@ -225,12 +225,7 @@ mod tests {
 
     #[bench]
     fn name(b: &mut Bencher) {
-        let input = get_text("/home/pathetic_gull/repos/advent2023/src/bin/day5.txt")
-            .unwrap_or_else(|| {
-                println!("Invalid file");
-                exit(1)
-            });
-
+        let input = get_text("src/bin/day5.txt").expect("Invalid file");
         b.iter(|| lowest_location(&input, traverse_range));
     }
 

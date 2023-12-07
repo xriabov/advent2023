@@ -1,3 +1,4 @@
+#![feature(test)]
 use std::process::exit;
 
 use advent2023::*;
@@ -76,6 +77,18 @@ fn part_2(input: &str) -> i64 {
     count_winning_options(&parse_input_2(input))
 }
 
+fn brute_solution_2(input: &str) -> i64 {
+    let race = parse_input_2(input);
+    let mut counter = 0;
+    for num in 1..race.time {
+        if num * (race.time - num) > race.record {
+            counter += 1;
+        }
+    }
+
+    counter
+}
+
 fn main() {
     let input = get_input_text().unwrap_or_else(|| {
         println!("Invalid file");
@@ -86,6 +99,7 @@ fn main() {
     println!("{}", part_2(&input));
 }
 
+extern crate test;
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -113,5 +127,22 @@ Distance:  9  40  200";
         let parsed = parse_input_2(input);
         assert_eq!(parsed.time, 71530);
         assert_eq!(parsed.record, 940200);
+    }
+
+    // bench results:
+    // normal: 224 ns
+    // brute:  23 ms (100000 times slower)
+
+    #[bench]
+    fn normal(b: &mut test::Bencher) {
+        let input = get_text("src/bin/day6.txt").expect("give me file");
+        b.iter(|| part_2(&input));
+    }
+
+    // y not implement bruteforce solution after the normal one...
+    #[bench]
+    fn brute(b: &mut test::Bencher) {
+        let input = get_text("src/bin/day6.txt").expect("give me file");
+        b.iter(|| brute_solution_2(&input));
     }
 }

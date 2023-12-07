@@ -12,6 +12,7 @@ pub fn get_path() -> Option<String> {
 /// Gets all content of a file in "./src/bin/{binary_name}.txt"
 pub fn get_input_text() -> Option<String> {
     let path = get_path()?;
+    dbg!(&path);
     fs::read_to_string(path).ok()
 }
 

@@ -14,3 +14,7 @@ pub fn get_input_text() -> Option<String> {
     let path = get_path()?;
     fs::read_to_string(path).ok()
 }
+
+pub fn get_text(path: &str) -> Option<String> {
+    fs::read_to_string(path).ok()
+}
